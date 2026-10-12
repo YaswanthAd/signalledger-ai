@@ -124,7 +124,7 @@ This is a local development release. Before internet exposure, add real identity
 - [Source scenarios](examples/)
 - [Tests](tests/)
 
-Created for [Yaswanth Adari](https://github.com/YaswanthAd) · [MIT license](LICENSE) · [Third-party icon notices](docs/assets/icons/ATTRIBUTION.md)
+Created by [Yaswanth Adari](https://github.com/YaswanthAd) · [MIT license](LICENSE) · [Third-party icon notices](docs/assets/icons/ATTRIBUTION.md)
 
 ## Companion project
 
