@@ -1,0 +1,197 @@
+{
+  "title": "The dashboard is late. The warehouse is healthy.",
+  "target": "executive_dashboard",
+  "question": "What caused the freshness delay and where should on-call start?",
+  "assets": [
+    {
+      "id": "partner_api",
+      "label": "Partner delivery API",
+      "kind": "source",
+      "parents": []
+    },
+    {
+      "id": "event_ingest",
+      "label": "Hourly ingestion",
+      "kind": "pipeline",
+      "parents": [
+        "partner_api"
+      ]
+    },
+    {
+      "id": "raw_events",
+      "label": "Raw event table",
+      "kind": "table",
+      "parents": [
+        "event_ingest"
+      ]
+    },
+    {
+      "id": "revenue_mart",
+      "label": "Revenue mart",
+      "kind": "table",
+      "parents": [
+        "raw_events"
+      ]
+    },
+    {
+      "id": "executive_dashboard",
+      "label": "Revenue dashboard",
+      "kind": "dashboard",
+      "parents": [
+        "revenue_mart"
+      ]
+    },
+    {
+      "id": "billing_feed",
+      "label": "Independent billing feed",
+      "kind": "source",
+      "parents": []
+    }
+  ],
+  "notes": [
+    {
+      "id": "log-429",
+      "asset_id": "partner_api",
+      "kind": "log",
+      "text": "Repeated HTTP 429 responses. Retry-After rose from 2 seconds to 120 seconds.",
+      "timestamp": "2026-10-11T10:02:00+00:00"
+    },
+    {
+      "id": "change-poll",
+      "asset_id": "partner_api",
+      "kind": "change",
+      "text": "Synthetic connector deployment changed poll interval from 60 seconds to 2 seconds.",
+      "timestamp": "2026-10-11T09:58:00+00:00"
+    },
+    {
+      "id": "runbook-rate",
+      "asset_id": "partner_api",
+      "kind": "runbook",
+      "text": "HTTP 429 rate limit: inspect Retry-After and upstream quota. Compare ingestion freshness with source availability. Confirm complete source hours before replay.",
+      "timestamp": "2026-10-01T00:00:00+00:00"
+    },
+    {
+      "id": "runbook-null",
+      "asset_id": "raw_events",
+      "kind": "runbook",
+      "text": "Null spike after schema deployment: compare missing fields and payload versions; inspect column mapping and quarantine samples.",
+      "timestamp": "2026-10-01T00:00:00+00:00"
+    }
+  ],
+  "analyst": "rules",
+  "signals": [
+    {
+      "id": "sig-source",
+      "asset_id": "partner_api",
+      "metric": "freshness_minutes",
+      "baseline": [
+        3,
+        4,
+        4,
+        5,
+        3,
+        4,
+        4
+      ],
+      "observed": 47,
+      "detail": "Upstream HTTP 429 rate limit delays source availability.",
+      "timestamp": "2026-10-11T10:04:00+00:00"
+    },
+    {
+      "id": "sig-ingest",
+      "asset_id": "event_ingest",
+      "metric": "duration_seconds",
+      "baseline": [
+        40,
+        42,
+        44,
+        41,
+        43,
+        42
+      ],
+      "observed": 240,
+      "detail": "Task retries waiting on the partner source.",
+      "timestamp": "2026-10-11T10:09:00+00:00"
+    },
+    {
+      "id": "sig-raw",
+      "asset_id": "raw_events",
+      "metric": "freshness_minutes",
+      "baseline": [
+        6,
+        7,
+        6,
+        8,
+        7,
+        7
+      ],
+      "observed": 49,
+      "detail": "Raw table is stale.",
+      "timestamp": "2026-10-11T10:14:00+00:00"
+    },
+    {
+      "id": "sig-mart",
+      "asset_id": "revenue_mart",
+      "metric": "row_count",
+      "baseline": [
+        1000,
+        1020,
+        980,
+        1010,
+        990,
+        1000
+      ],
+      "observed": 130,
+      "detail": "Latest partition has fewer events.",
+      "timestamp": "2026-10-11T10:20:00+00:00"
+    },
+    {
+      "id": "sig-dashboard",
+      "asset_id": "executive_dashboard",
+      "metric": "freshness_minutes",
+      "baseline": [
+        10,
+        11,
+        12,
+        10,
+        11,
+        10
+      ],
+      "observed": 60,
+      "detail": "Revenue dashboard is delayed.",
+      "timestamp": "2026-10-11T10:25:00+00:00"
+    },
+    {
+      "id": "sig-warehouse",
+      "asset_id": "revenue_mart",
+      "metric": "duration_seconds",
+      "baseline": [
+        20,
+        21,
+        22,
+        20,
+        19,
+        21
+      ],
+      "observed": 21,
+      "detail": "Warehouse query duration is normal.",
+      "timestamp": "2026-10-11T10:25:00+00:00"
+    },
+    {
+      "id": "sig-billing",
+      "asset_id": "billing_feed",
+      "metric": "freshness_minutes",
+      "baseline": [
+        3,
+        4,
+        3,
+        4,
+        3,
+        4
+      ],
+      "observed": 4,
+      "detail": "Independent billing feed is healthy.",
+      "timestamp": "2026-10-11T10:25:00+00:00"
+    }
+  ]
+}

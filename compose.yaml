@@ -1,0 +1,21 @@
+services:
+  signalledger:
+    build: .
+    ports:
+      - "127.0.0.1:8011:8011"
+    environment:
+      DB_PATH: /data/signalledger.db
+      OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2}
+      APP_TOKEN: ${APP_TOKEN:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - records:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8011/api/health')"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+volumes:
+  records:

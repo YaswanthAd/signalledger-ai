@@ -1,0 +1,23 @@
+{
+  "scope": "Three designed synthetic fixtures; evidence engine only; no LLM quality or load benchmark.",
+  "results": [
+    {
+      "scenario": "01-source-delay",
+      "expected": "partner_api",
+      "observed": "partner_api",
+      "passed": true
+    },
+    {
+      "scenario": "02-schema-drift",
+      "expected": "raw_events",
+      "observed": "raw_events",
+      "passed": true
+    },
+    {
+      "scenario": "03-healthy",
+      "expected": null,
+      "observed": null,
+      "passed": true
+    }
+  ]
+}
